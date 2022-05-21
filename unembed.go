@@ -4,6 +4,7 @@ import (
 	"embed"
 	"io/fs"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -37,6 +38,14 @@ func Unembed(efs embed.FS, dir string) error {
 			if err := ioutil.WriteFile(unpackpath, data, mode); err != nil {
 				return err
 			}
+			if mode.Perm() == 0444 {
+				log.Println("chmod", unpackpath, 0644)
+				if err := os.Chmod(unpackpath, 0644); err != nil {
+					return err
+				}
+			}
+			//add write permission to the file
+
 		}
 		return nil
 	})
