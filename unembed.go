@@ -19,7 +19,9 @@ func Unembed(efs embed.FS, dir string, prefix ...string) error {
 			return err
 		}
 		if d.IsDir() {
-			err := os.MkdirAll(dir+"/"+path, 0755)
+			unpackpath := filepath.Join(dir, path)
+			unpackpath = strings.Replace(unpackpath, concatenatedPrefix, "", 1)
+			err := os.MkdirAll(unpackpath, 0755)
 			if err != nil {
 				return err
 			}
