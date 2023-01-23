@@ -7,11 +7,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Unembed unpacks an embed.FS to a directory recursively.
-func Unembed(efs embed.FS, dir string) error {
+func Unembed(efs embed.FS, dir string, prefix ...string) error {
+	concatenatedPrefix := filepath.Join(prefix...)
 	return fs.WalkDir(efs, ".", func(path string, d fs.DirEntry, err error) error {
+
 		if err != nil {
 			return err
 		}
@@ -35,6 +38,7 @@ func Unembed(efs embed.FS, dir string) error {
 				return err
 			}
 			unpackpath := filepath.Join(dir, path)
+			unpackpath = strings.Replace(unpackpath, concatenatedPrefix, "", 1)
 			if err := ioutil.WriteFile(unpackpath, data, mode); err != nil {
 				return err
 			}
